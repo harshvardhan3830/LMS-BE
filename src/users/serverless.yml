@@ -1,0 +1,31 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: vardhan3830
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: lms
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: lms-be
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    NODE_ENV: ${self:provider.stage}
+
+functions:
+  userLogin:
+    handler: userLogin.handler
+    events:
+      - httpApi:
+          path: ${self:custom.basePath}/user-login
+          method: post
+          cors: true
+
+custom:
+  basePath: /${self:provider.stage}/users
+  serverless-offline:
+    httpPort: 15001
